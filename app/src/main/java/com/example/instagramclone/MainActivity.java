@@ -35,15 +35,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 46;
-
-    private EditText mEditTextDescription;
-    private Button mButtonCaptureImage;
-    private ImageView mImageViewPost;
-    private Button mButtonSubmit;
-
-    private File photoFile;
-    private String photoFileName = "photo.jpg";
 
     private BottomNavigationView mBottomNavigationView;
 
@@ -52,36 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mEditTextDescription = findViewById(R.id.editTextDescription);
-        mButtonCaptureImage = findViewById(R.id.buttonCaptureImage);
-        mImageViewPost = findViewById(R.id.imageViewPost);
-        mButtonSubmit = findViewById(R.id.buttonSubmit);
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
-
-        mButtonCaptureImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchCamera();
-            }
-        });
-
-        mButtonSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String description = mEditTextDescription.getText().toString();
-                // Error handling for empty description and for no image data being added
-                if(description.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Description cannot be empty", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(photoFile == null || mImageViewPost.getDrawable() == null) {
-                    Toast.makeText(MainActivity.this, "There is no image!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(description, currentUser, photoFile);
-            }
-        });
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -101,107 +63,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 return true;
-            }
-        });
-    }
-
-    private void launchCamera() {
-        // create Intent to take a picture and return control to the calling application
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Create a File reference for future access
-        photoFile = getPhotoFileUri(photoFileName);
-
-        // wrap File object into a content provider
-        // required for API >= 24
-        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        Uri fileProvider = FileProvider.getUriForFile(MainActivity.this, "fileprovider", photoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            // Start the image capture intent to take photo
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // by this point we have the camera photo on disk
-                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                // RESIZE BITMAP, see section below
-                // Load the taken image into a preview
-                mImageViewPost.setImageBitmap(takenImage);
-            } else { // Result was a failure
-                Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    // Returns the File for a photo stored on disk given the fileName
-    private File getPhotoFileUri(String fileName) {
-        // Get safe storage directory for photos
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
-        // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d(TAG, "failed to create directory");
-        }
-
-        // Return the file target for the photo based on filename
-        return new File(mediaStorageDir.getPath() + File.separator + fileName);
-    }
-
-    // Takes in a description and user to fill in required fields for post objects in our Parse DB
-    private void savePost(String description, ParseUser currentUser, File photoFile) {
-        Post post = new Post();
-        post.setDescription(description);
-        post.setUser(currentUser);
-        post.setImage(new ParseFile(photoFile));
-
-        // Executes query on a background thread to prevent disruption of main thread for improved
-        // user experience
-        post.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if(e != null) {
-                    Log.e(TAG, "Error saving post", e);
-                    Toast.makeText(MainActivity.this, "Error while saving", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Log.i(TAG, "Post saved successfully");
-                // Clear our description field to give user more visual confirmation of success
-                mEditTextDescription.setText("");
-                // Clear out image view for more confirmation of save success
-                mImageViewPost.setImageResource(0);
-            }
-        });
-    }
-
-    // Creates and executes a query for all the post objects in our Parse DB
-    private void queryPosts() {
-        // Specify which class to query from Parse DB
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-
-        // Using findInBackground to pull all Posts from DB
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                // The ParseException will not be null if error with populating List with Post objects
-                // went wrong with query
-                if(e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
-                    return;
-                }
-                // The ParseException will be null if List was populated successfully from query
-                for(Post post : posts) {
-                    Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
-                }
             }
         });
     }

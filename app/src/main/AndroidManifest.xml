@@ -9,6 +9,7 @@
         android:icon="@mipmap/insta_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/insta_icon"
+        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:name=".ParseApplication"
         android:theme="@style/AppTheme">

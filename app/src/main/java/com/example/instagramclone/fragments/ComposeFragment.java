@@ -179,27 +179,4 @@ public class ComposeFragment extends Fragment {
             }
         });
     }
-
-    // Creates and executes a query for all the post objects in our Parse DB
-    private void queryPosts() {
-        // Specify which class to query from Parse DB
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-
-        // Using findInBackground to pull all Posts from DB
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                // The ParseException will not be null if error with populating List with Post objects
-                // went wrong with query
-                if(e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
-                    return;
-                }
-                // The ParseException will be null if List was populated successfully from query
-                for(Post post : posts) {
-                    Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
-                }
-            }
-        });
-    }
 }

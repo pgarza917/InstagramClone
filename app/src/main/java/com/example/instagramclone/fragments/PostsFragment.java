@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ public class PostsFragment extends Fragment {
     public static final String TAG = PostsFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerViewPosts;
+    protected SwipeRefreshLayout mSwipeContainer;
     protected PostsAdapter mAdapter;
     protected List<Post> mAllPosts;
 
@@ -50,6 +52,24 @@ public class PostsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mRecyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
+
+        mSwipeContainer = view.findViewById(R.id.swipeContainer);
+
+        // Setup refresh listener which triggers new data loading
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                queryPosts();
+            }
+        });
+        // Configure the refreshing colors
+        mSwipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         // Recycler View steps:
         // 0. Create layout for one row in the list
@@ -87,9 +107,11 @@ public class PostsFragment extends Fragment {
                 for(Post post : posts) {
                     Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
                 }
+                mAdapter.clear();
                 // Update the posts data set and notify the adapter of change
-                mAllPosts.addAll(posts);
-                mAdapter.notifyDataSetChanged();
+                mAdapter.addAll(posts);
+                // Now we call setRefreshing(false) to signal refresh has finished
+                mSwipeContainer.setRefreshing(false);
             }
         });
     }

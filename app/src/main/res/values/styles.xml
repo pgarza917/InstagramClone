@@ -8,4 +8,17 @@
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 
+    <style name="PostsTheme" parent="Theme.AppCompat.Light">
+        <item name="android:actionBarStyle">@style/PostsActionBarTheme</item>
+    </style>
+
+    <style name="PostsActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/colorWhite</item>
+        <item name="titleTextStyle">@style/PostsBarTitle</item>
+        <item name="icon">@drawable/nav_logo_whiteout</item>
+    </style>
+
+    <style name="PostsBarTitle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+    </style>
+
 </resources>

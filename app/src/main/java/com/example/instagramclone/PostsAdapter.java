@@ -1,6 +1,7 @@
 package com.example.instagramclone;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,23 +45,39 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         return mPosts.size();
     }
 
+    // Clean all elements of the recycler
+    public void clear() {
+        mPosts.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items -- change to type used
+    public void addAll(List<Post> posts) {
+        mPosts.addAll(posts);
+        notifyDataSetChanged();
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mTextViewUsername;
         private ImageView mImageViewImage;
         private TextView mTextViewDescription;
+        private ImageView mImageViewProfile;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mTextViewUsername = itemView.findViewById(R.id.textViewUsername);
             mTextViewDescription = itemView.findViewById(R.id.textViewDescription);
             mImageViewImage = itemView.findViewById(R.id.imageViewImage);
+            mImageViewProfile = itemView.findViewById(R.id.imageViewProfile);
         }
 
         public void bind(Post post) {
             // Bind the post data to the view elements
-            mTextViewUsername.setText(post.getUser().getUsername());
-            mTextViewDescription.setText(post.getDescription());
+            String username = post.getUser().getUsername();
+            mTextViewUsername.setText(username);
+            String description = "<b>" + username + "</b>" + " " + post.getDescription();
+            mTextViewDescription.setText(Html.fromHtml(description));
 
             // Use Glide to load post image from DB into image view
             // Also confirm that the post has a valid image in DB to load
@@ -70,6 +87,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 Glide.with(mContext).load(image.getUrl()).into(mImageViewImage);
             } else {
                 mImageViewImage.setVisibility(View.GONE);
+            }
+
+            // Use Glide again to load profile image from DB into image view
+            // Confirm that the post has a valid image in DB to load
+            ParseFile profileImage = post.getUser().getParseFile(Post.KEY_PROFILE_IMAGE);
+            if(profileImage != null) {
+                mImageViewProfile.setVisibility(View.VISIBLE);
+                Glide.with(mContext).load(profileImage.getUrl()).circleCrop().into(mImageViewProfile);
+            } else {
+                mImageViewProfile.setVisibility(View.GONE);
             }
         }
     }

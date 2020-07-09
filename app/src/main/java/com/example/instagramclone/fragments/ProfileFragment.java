@@ -34,9 +34,11 @@ public class ProfileFragment extends PostsFragment {
                 for(Post post : posts) {
                     Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
                 }
+                mAdapter.clear();
                 // Update the posts data set and notify the adapter of change
-                mAllPosts.addAll(posts);
-                mAdapter.notifyDataSetChanged();
+                mAdapter.addAll(posts);
+                // Now we call setRefreshing(false) to signal refresh has finished
+                mSwipeContainer.setRefreshing(false);
             }
         });
     }

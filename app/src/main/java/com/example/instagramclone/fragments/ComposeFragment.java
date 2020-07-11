@@ -73,7 +73,7 @@ public class ComposeFragment extends Fragment {
         mButtonCaptureImage = view.findViewById(R.id.buttonCaptureImage);
         mImageViewPost = view.findViewById(R.id.imageViewPost);
         mButtonSubmit = view.findViewById(R.id.buttonSubmit);
-
+        mImageViewPost.setVisibility(View.GONE);
 
         mButtonCaptureImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +97,11 @@ public class ComposeFragment extends Fragment {
                 }
                 ParseUser currentUser = ParseUser.getCurrentUser();
                 savePost(description, currentUser, mPhotoFile);
+                Toast.makeText(getContext(), "Post Successful!", Toast.LENGTH_LONG).show();
+
+                Fragment fragment = new PostsFragment();
+
+                ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
             }
         });
 
@@ -131,6 +136,7 @@ public class ComposeFragment extends Fragment {
                 Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                 // RESIZE BITMAP, see section below
                 // Load the taken image into a preview
+                mImageViewPost.setVisibility(View.VISIBLE);
                 mImageViewPost.setImageBitmap(takenImage);
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();

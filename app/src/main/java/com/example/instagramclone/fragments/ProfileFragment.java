@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,8 @@ public class ProfileFragment extends Fragment {
     private ImageView mImageViewProfileImage;
     private TextView mTextViewUsername;
     private Button mButtonLogout;
+    private TextView mTextViewPostsCount;
+    private ProgressBar mProgressBar;
 
     // Required empty constructor
     public ProfileFragment() {}
@@ -59,10 +62,14 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mProgressBar = view.findViewById(R.id.progessbarLoadingProfile);
+        mProgressBar.setVisibility(ProgressBar.VISIBLE);
+
         mRecyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
         mImageViewProfileImage = view.findViewById(R.id.imageViewProfileImage);
         mTextViewUsername = view.findViewById(R.id.textViewUsername);
         mButtonLogout = view.findViewById(R.id.buttonLogout);
+        mTextViewPostsCount = view.findViewById(R.id.textViewPostsCount);
 
         mSwipeContainer = view.findViewById(R.id.swipeContainer);
 
@@ -99,7 +106,13 @@ public class ProfileFragment extends Fragment {
         String username = ParseUser.getCurrentUser().getUsername();
         mTextViewUsername.setText(username);
 
-
+        ParseFile profileImage = ParseUser.getCurrentUser().getParseFile(Post.KEY_PROFILE_IMAGE);
+        if(profileImage != null) {
+            mImageViewProfileImage.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(profileImage.getUrl()).circleCrop().into(mImageViewProfileImage);
+        } else {
+            mImageViewProfileImage.setVisibility(View.GONE);
+        }
 
         mButtonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,13 +152,11 @@ public class ProfileFragment extends Fragment {
                 // Now we call setRefreshing(false) to signal refresh has finished
                 mSwipeContainer.setRefreshing(false);
 
-                ParseFile profileImage = mAllPosts.get(0).getUser().getParseFile("profileImage");
-                if(profileImage != null) {
-                    mImageViewProfileImage.setVisibility(View.VISIBLE);
-                    Glide.with(getContext()).load(profileImage.getUrl()).circleCrop().into(mImageViewProfileImage);
-                } else {
-                    mImageViewProfileImage.setVisibility(View.GONE);
-                }
+                int postsCount = posts.size();
+                String stringPostsCount = Integer.toString(postsCount);
+                mTextViewPostsCount.setText(stringPostsCount);
+
+                mProgressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
     }

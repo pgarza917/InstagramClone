@@ -33,8 +33,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"
-            android:theme="@style/PostsTheme"
-            android:label="Instagram"></activity>
+            android:theme="@style/AppTheme"
+            android:label=""></activity>
     </application>
 
 </manifest>

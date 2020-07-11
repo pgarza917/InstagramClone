@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.instagramclone.Post;
 import com.example.instagramclone.PostsAdapter;
@@ -35,6 +36,7 @@ public class PostsFragment extends Fragment {
     protected SwipeRefreshLayout mSwipeContainer;
     protected PostsAdapter mAdapter;
     protected List<Post> mAllPosts;
+    protected ProgressBar mProgresBar;
 
     public PostsFragment() {
         // Required empty public constructor
@@ -50,6 +52,9 @@ public class PostsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mProgresBar= view.findViewById(R.id.progressBarLoadingPosts);
+        mProgresBar.setVisibility(ProgressBar.VISIBLE);
 
         mRecyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
 
@@ -112,6 +117,7 @@ public class PostsFragment extends Fragment {
                 mAdapter.addAll(posts);
                 // Now we call setRefreshing(false) to signal refresh has finished
                 mSwipeContainer.setRefreshing(false);
+                mProgresBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
     }

@@ -6,6 +6,10 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import org.parceler.Parcel;
+
+import java.util.List;
+
 @ParseClassName("Post")
 public class Post extends ParseObject {
 
@@ -14,7 +18,7 @@ public class Post extends ParseObject {
     public static final String KEY_USER = "user";
     public static final String KEY_CREATED = "createdAt";
     public static final String KEY_PROFILE_IMAGE = "profileImage";
-
+    public static final String KEY_LIKES = "likes";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);

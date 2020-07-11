@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     android:layout_margin="16dp"
+    android:orientation="vertical"
     tools:context=".LoginActivity">
 
     <EditText
         android:id="@+id/editTextUsername"
+        style="@android:style/Widget.Holo.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="170dp"
         android:layout_weight="1"
+        android:backgroundTint="@color/colorBlack"
         android:ems="10"
         android:hint="Username" />
 
@@ -20,16 +23,33 @@
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextUsername"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
+        android:backgroundTint="@color/colorBlack"
         android:ems="10"
         android:hint="Password"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextPassword"
+        android:layout_marginTop="50dp"
         android:layout_weight="1"
+        android:backgroundTint="@color/colorBlue"
         android:text="Login" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/buttonRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonLogin"
+        android:layout_alignParentStart="true"
+        android:backgroundTint="@color/colorGreen"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="12dp"
+        android:text="Register" />
+
+</RelativeLayout>

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_margin="4dp"
     android:orientation="vertical">
 
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
         android:layout_toEndOf="@+id/imageViewProfile"
         android:textColor="@color/colorBlack"
@@ -24,7 +24,7 @@
     <ImageView
         android:id="@+id/imageViewImage"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="400dp"
         android:layout_below="@+id/imageViewProfile"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
@@ -53,6 +53,7 @@
         android:layout_height="32dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
         app:srcCompat="@drawable/instagram_user_filled_24" />
 
     <TextView
@@ -67,23 +68,11 @@
         android:textSize="10sp"
         tools:text="9 hours ago" />
 
-    <ImageButton
-        android:id="@+id/imageButtonLike"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_below="@+id/imageViewImage"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="0dp"
-        android:background="@android:drawable/screen_background_light_transparent"
-        android:scaleType="fitCenter"
-        tools:srcCompat="@drawable/ufi_heart" />
-
     <TextView
         android:id="@+id/textViewLikes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageButtonLike"
+        android:layout_below="@+id/imageViewImage"
         android:layout_alignParentStart="true"
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"

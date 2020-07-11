@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.telecom.Call;
 import android.text.Html;
 import android.text.format.DateUtils;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -114,6 +116,32 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
             itemView.setOnClickListener(this);
             mImageButtonLike.setOnClickListener(this);
+
+            itemView.setOnTouchListener(new OnDoubleTapListener(mContext) {
+                @Override
+                public void onDoubleTap(MotionEvent e) {
+                    final int position = getAdapterPosition();
+                    // Getting the current post from the List of posts using the adapter position
+                    Post post = mPosts.get(position);
+                    // Retrieving the array of users that have liked the current post
+                    List<ParseUser> likes = (ArrayList<ParseUser>) post.get("likes");
+
+                    List<ParseUser> users = new ArrayList<>();
+                    users.add(ParseUser.getCurrentUser());
+
+                    // If the current user clicked the like button and has already liked the post before,
+                    // we want to update our Parse database by removing the user from the list of users
+                    // that have liked the post. Else, if the user clicked "like" and has not previously
+                    // liked the post, we want to add the user to the array of users for the current post
+                    if(likes != null && listHasUser(likes, ParseUser.getCurrentUser())) {
+                        post.removeAll(Post.KEY_LIKES, users);
+                    } else {
+                        post.addUnique(Post.KEY_LIKES, ParseUser.getCurrentUser());
+                    }
+                    post.saveInBackground();
+                    notifyItemChanged(position);
+                }
+            });
         }
 
         public void bind(Post post) {
@@ -179,26 +207,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             final int position = getAdapterPosition();
             // Getting the current post from the List of posts using the adapter position
             Post post = mPosts.get(position);
-            if(view.getId() == R.id.imageButtonLike) {
-
-                // Retrieving the array of users that have liked the current post
-                List<ParseUser> likes = (ArrayList<ParseUser>) post.get("likes");
-
-                List<ParseUser> users = new ArrayList<>();
-                users.add(ParseUser.getCurrentUser());
-
-                // If the current user clicked the like button and has already liked the post before,
-                // we want to update our Parse database by removing the user from the list of users
-                // that have liked the post. Else, if the user clicked "like" and has not previously
-                // liked the post, we want to add the user to the array of users for the current post
-                if(likes != null && listHasUser(likes, ParseUser.getCurrentUser())) {
-                    post.removeAll(Post.KEY_LIKES, users);
-                } else {
-                    post.addUnique(Post.KEY_LIKES, ParseUser.getCurrentUser());
-                }
-                post.saveInBackground();
-                notifyItemChanged(position);
-            } else if(position != RecyclerView.NO_POSITION) {
+            if(position != RecyclerView.NO_POSITION) {
                 // If anywhere on the item is tapped, launch a new details fragment
                 Fragment fragment = new DetailsFragment();
 

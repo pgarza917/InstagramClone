@@ -71,6 +71,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="36dp"
+        android:textSize="18sp"
         android:textStyle="bold"
         tools:text="9" />
 

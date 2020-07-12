@@ -24,7 +24,7 @@
         android:minHeight="?attr/actionBarSize">
 
         <ImageView
-            android:id="@+id/imageViewInstaTitle"
+            android:id="@+id/imageButtonInstaTitle"
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:layout_marginStart="145dp"

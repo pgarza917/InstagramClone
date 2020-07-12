@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.example.instagramclone.Post;
@@ -52,6 +53,7 @@ public class PostsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
         mProgresBar= view.findViewById(R.id.progressBarLoadingPosts);
         mProgresBar.setVisibility(ProgressBar.VISIBLE);

@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.example.instagramclone.Post;
@@ -27,16 +26,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
+ *  PostsFragment is a subclass of {@link Fragment}. It handles
+ *  some functionality of the "home" screen for users, i.e. a feed of the
+ *  last 20 posts submitted to the Parse database that the InstagramClone
+ *  app uses. Specifically, this class handles the following features:
+ *      - Querying the Parse database for the last 20 submitted posts
+ *      - Displaying the retrieved, most-recent 20 posts by setting up
+ *      the Recycler View in which these posts will be shown
+ *      - Allowing users to swipe from the top of their screens to refresh
+ *      by handling the re-querying of the database
  */
 public class PostsFragment extends Fragment {
 
     public static final String TAG = PostsFragment.class.getSimpleName();
 
-    private RecyclerView mRecyclerViewPosts;
+    private RecyclerView mPostsRecyclerView;
     protected SwipeRefreshLayout mSwipeContainer;
     protected PostsAdapter mAdapter;
-    protected List<Post> mAllPosts;
+    protected List<Post> mAllPostsList;
     protected ProgressBar mProgresBar;
 
     public PostsFragment() {
@@ -58,7 +65,7 @@ public class PostsFragment extends Fragment {
         mProgresBar= view.findViewById(R.id.progressBarLoadingPosts);
         mProgresBar.setVisibility(ProgressBar.VISIBLE);
 
-        mRecyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
+        mPostsRecyclerView = view.findViewById(R.id.recyclerViewPosts);
 
         mSwipeContainer = view.findViewById(R.id.swipeContainer);
 
@@ -81,14 +88,14 @@ public class PostsFragment extends Fragment {
         // Recycler View steps:
         // 0. Create layout for one row in the list
         // 1. Create the adapter
-        mAllPosts = new ArrayList<>();
-        mAdapter = new PostsAdapter(getContext(), mAllPosts);
+        mAllPostsList = new ArrayList<>();
+        mAdapter = new PostsAdapter(getContext(), mAllPostsList);
         // 2. Create the data source
         // 3. Set the adapter on the Recycler View
-        mRecyclerViewPosts.setAdapter(mAdapter);
+        mPostsRecyclerView.setAdapter(mAdapter);
         // 4. Set the layout manager on the Recycler View
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        mRecyclerViewPosts.setLayoutManager(layoutManager);
+        mPostsRecyclerView.setLayoutManager(layoutManager);
 
         queryPosts();
     }

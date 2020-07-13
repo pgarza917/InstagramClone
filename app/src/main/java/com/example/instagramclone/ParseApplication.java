@@ -5,6 +5,11 @@ import android.app.Application;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
+/**
+ *  ParseApplication is a subclass of {@link Application}. It handles the
+ *  setup from the client-side to allow successful communication between
+ *  the current InstagramClone app client and the Parse database
+ */
 public class ParseApplication extends Application {
     @Override
     public void onCreate() {

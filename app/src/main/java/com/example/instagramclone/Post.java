@@ -10,6 +10,13 @@ import org.parceler.Parcel;
 
 import java.util.List;
 
+/**
+ *  Post is a subclass of {@link ParseObject}. It represents a post
+ *  that is submitted to the InstagramClone app Parse database and
+ *  contains the various associated details, e.g. caption, creator.
+ *  Utilizes various ParseObject methods to access data from the
+ *  database about the current Post
+ */
 @ParseClassName("Post")
 public class Post extends ParseObject {
 
@@ -19,7 +26,6 @@ public class Post extends ParseObject {
     public static final String KEY_CREATED = "createdAt";
     public static final String KEY_PROFILE_IMAGE = "profileImage";
     public static final String KEY_LIKES = "likes";
-    public static final String KEY_POSTS_COUNT = "postsCount";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);

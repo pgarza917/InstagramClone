@@ -13,6 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ *  PostParcel is class representing a Post in the Parse
+ *  database of the InstagramClone app. It contains all the
+ *  various details associated with a post submitted to the
+ *  InstagramClone app by the user. It is used to allow for
+ *  Post objects retrieved from the Parse database to be
+ *  Parcelable for the transfer of data between activities or
+ *  fragments within the app
+ */
 @Parcel
 public class PostParcel {
 

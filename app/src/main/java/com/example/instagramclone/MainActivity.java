@@ -42,6 +42,16 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ *  MainActivity is a subclass of {@link AppCompatActivity}. It handles the
+ *  functionality of toolbar and bottom navigation bar seen all throughout
+ *  the different screens of the app. Specifically, it handles the following
+ *  features:
+ *      - Allowing users to tap on icons of the various different screens
+ *      of the app to go to those different screens
+ *      - Displaying the correct toolbar with the "Instagram" logo and other
+ *      action menu icons
+ */
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -64,9 +74,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 Fragment fragment;
                 switch(menuItem.getItemId()) {
-                    case R.id.action_home:
-                        fragment = new PostsFragment();
-                        break;
                     case R.id.action_compose:
                         fragment = new ComposeFragment();
                         break;

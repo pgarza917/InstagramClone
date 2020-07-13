@@ -2,8 +2,6 @@ package com.example.instagramclone.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,18 +32,33 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  ProfileFragment is a subclass of {@link Fragment}. It handles the
+ *  functionality of the screen users go to (using the bottom navigation
+ *  bar) view details about their "Instagram" profile. Specifically, this
+ *  class handles the following features:
+ *      - Displaying the current user's profile picture, number of posts
+ *      they've submitted, and username via a Parse database query
+ *      - Allowing users to logout by tapping on a button
+ *      - Displaying all the posts the current user has submitted and allowing
+ *      the current user to interact with their posts by setting up the
+ *      Recycler View in which these posts will be shown
+ *      - Allowing users to swipe from the top of the Recycler view that
+ *      displays their posts to show the most-updated details about their
+ *      posts, e.g. likes, by re-querying the Parse database
+ */
 public class ProfileFragment extends Fragment {
 
     public static final String TAG = ProfileFragment.class.getSimpleName();
 
-    private RecyclerView mRecyclerViewPosts;
+    private RecyclerView mPostsRecyclerView;
     protected SwipeRefreshLayout mSwipeContainer;
     protected PostsAdapter mAdapter;
-    protected List<Post> mAllPosts;
-    private ImageView mImageViewProfileImage;
-    private TextView mTextViewUsername;
-    private Button mButtonLogout;
-    private TextView mTextViewPostsCount;
+    protected List<Post> mAllPostsList;
+    private ImageView mProfileImageView;
+    private TextView mUsernameTextView;
+    private Button mLogoutButton;
+    private TextView mPostsCountTextView;
     private ProgressBar mProgressBar;
 
     // Required empty constructor
@@ -65,11 +78,11 @@ public class ProfileFragment extends Fragment {
         mProgressBar = view.findViewById(R.id.progessbarLoadingProfile);
         mProgressBar.setVisibility(ProgressBar.VISIBLE);
 
-        mRecyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
-        mImageViewProfileImage = view.findViewById(R.id.imageViewProfileImage);
-        mTextViewUsername = view.findViewById(R.id.textViewUsername);
-        mButtonLogout = view.findViewById(R.id.buttonLogout);
-        mTextViewPostsCount = view.findViewById(R.id.textViewPostsCount);
+        mPostsRecyclerView = view.findViewById(R.id.recyclerViewPosts);
+        mProfileImageView = view.findViewById(R.id.imageViewProfileImage);
+        mUsernameTextView = view.findViewById(R.id.textViewUsername);
+        mLogoutButton = view.findViewById(R.id.buttonLogout);
+        mPostsCountTextView = view.findViewById(R.id.textViewPostsCount);
 
         mSwipeContainer = view.findViewById(R.id.swipeContainer);
 
@@ -92,29 +105,29 @@ public class ProfileFragment extends Fragment {
         // Recycler View steps:
         // 0. Create layout for one row in the list
         // 1. Create the adapter
-        mAllPosts = new ArrayList<>();
-        mAdapter = new PostsAdapter(getContext(), mAllPosts);
+        mAllPostsList = new ArrayList<>();
+        mAdapter = new PostsAdapter(getContext(), mAllPostsList);
         // 2. Create the data source
         // 3. Set the adapter on the Recycler View
-        mRecyclerViewPosts.setAdapter(mAdapter);
+        mPostsRecyclerView.setAdapter(mAdapter);
         // 4. Set the layout manager on the Recycler View
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        mRecyclerViewPosts.setLayoutManager(layoutManager);
+        mPostsRecyclerView.setLayoutManager(layoutManager);
 
         queryPosts();
 
         String username = ParseUser.getCurrentUser().getUsername();
-        mTextViewUsername.setText(username);
+        mUsernameTextView.setText(username);
 
         ParseFile profileImage = ParseUser.getCurrentUser().getParseFile(Post.KEY_PROFILE_IMAGE);
         if(profileImage != null) {
-            mImageViewProfileImage.setVisibility(View.VISIBLE);
-            Glide.with(getContext()).load(profileImage.getUrl()).circleCrop().into(mImageViewProfileImage);
+            mProfileImageView.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(profileImage.getUrl()).circleCrop().into(mProfileImageView);
         } else {
-            mImageViewProfileImage.setVisibility(View.GONE);
+            mProfileImageView.setVisibility(View.GONE);
         }
 
-        mButtonLogout.setOnClickListener(new View.OnClickListener() {
+        mLogoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ParseUser.logOut();
@@ -154,7 +167,7 @@ public class ProfileFragment extends Fragment {
 
                 int postsCount = posts.size();
                 String stringPostsCount = Integer.toString(postsCount);
-                mTextViewPostsCount.setText(stringPostsCount);
+                mPostsCountTextView.setText(stringPostsCount);
 
                 mProgressBar.setVisibility(ProgressBar.INVISIBLE);
             }

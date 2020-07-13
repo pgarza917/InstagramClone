@@ -15,13 +15,28 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
+/**
+ *  LoginActivity is a subclass of {@link AppCompatActivity}. It handles the
+ *  functionality of the screen users are directed to when they need to sign
+ *  in to the app or when they are new users and need to register for a new
+ *  "Instagram" account. Specifically, this class handles the following
+ *  features:
+ *      - Allowing users to input both a username and password for logging in
+ *      or registering for a new account
+ *      - Allowing users to log in by logging them in the background with the
+ *      Parse database on a button press
+ *      - Allowing users to register for a new account by creating a new
+ *      account for them within the Parse database on a button press
+ *      - Navigating to the "home" screen when login or registration is
+ *      successful
+ */
 public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
 
     private Button mLoginButton;
-    private EditText mEditTextUsername;
-    private EditText mEditTextPassword;
+    private EditText mUsernameEditText;
+    private EditText mPasswordEditText;
     private Button mRegisterButton;
 
     @Override
@@ -36,16 +51,16 @@ public class LoginActivity extends AppCompatActivity {
 
         // Grab references to different components of the login view
         mLoginButton = findViewById(R.id.buttonLogin);
-        mEditTextUsername = findViewById(R.id.editTextUsername);
-        mEditTextPassword = findViewById(R.id.editTextPassword);
+        mUsernameEditText = findViewById(R.id.editTextUsername);
+        mPasswordEditText = findViewById(R.id.editTextPassword);
         mRegisterButton = findViewById(R.id.buttonRegister);
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "onClick login button");
-                String username = mEditTextUsername.getText().toString();
-                String password = mEditTextPassword.getText().toString();
+                String username = mUsernameEditText.getText().toString();
+                String password = mPasswordEditText.getText().toString();
                 loginUser(username, password);
             }
         });
@@ -53,8 +68,8 @@ public class LoginActivity extends AppCompatActivity {
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = mEditTextUsername.getText().toString();
-                String password = mEditTextPassword.getText().toString();
+                String username = mUsernameEditText.getText().toString();
+                String password = mPasswordEditText.getText().toString();
                 registerUser(username, password);
             }
         });
@@ -107,6 +122,4 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
         finish();
     }
-
-
 }

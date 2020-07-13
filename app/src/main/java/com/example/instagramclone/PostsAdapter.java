@@ -1,12 +1,9 @@
 package com.example.instagramclone;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.telecom.Call;
 import android.text.Html;
 import android.text.format.DateUtils;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,12 +15,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.instagramclone.fragments.DetailsFragment;
-import com.parse.Parse;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -32,18 +27,33 @@ import org.parceler.Parcels;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ *  PostsAdapter is a subclass of {@link RecyclerView.Adapter<PostsAdapter.ViewHolder>}.
+ *  It provides the functionality for how users view and interact with the individual
+ *  items in the Recycler View that contains the retrieved, most-recent 20 "Instagram"
+ *  posts from the Parse database. Specifically, through its definition of the View Holder
+ *  class, it handles the following features:
+ *      - Allowing users to double-tap on individual post's image to 'like' the post
+ *      - Allowing users to tap on the heart button to 'like' a post
+ *      - Allowing users to scroll through the most-recent 20 posts
+ *      - Displaying the most-recent 20 posts by querying the Parse database for the
+ *      associated details of those posts and binding the information to the various
+ *      view components of each item view within the Recycler View
+ *      - Allowing users to tap on a post to go to a screen with the post's details
+ *      - Displaying the each posts' caption, creator profile pic, number of likes,
+ *      creator username, and timestamp in each item view of the Recycler View
+ */
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<Post> mPosts;
+    private List<Post> mPostsList;
 
     public PostsAdapter(Context mContext, List<Post> mPosts) {
         this.mContext = mContext;
-        this.mPosts = mPosts;
+        this.mPostsList = mPosts;
     }
 
     @NonNull
@@ -55,24 +65,24 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Post post = mPosts.get(position);
+        Post post = mPostsList.get(position);
         holder.bind(post);
     }
 
     @Override
     public int getItemCount() {
-        return mPosts.size();
+        return mPostsList.size();
     }
 
     // Clean all elements of the recycler
     public void clear() {
-        mPosts.clear();
+        mPostsList.clear();
         notifyDataSetChanged();
     }
 
     // Add a list of items -- change to type used
     public void addAll(List<Post> posts) {
-        mPosts.addAll(posts);
+        mPostsList.addAll(posts);
         notifyDataSetChanged();
     }
 
@@ -96,33 +106,33 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView mTextViewUsername;
-        private ImageView mImageViewImage;
-        private TextView mTextViewDescription;
-        private ImageView mImageViewProfile;
-        private TextView mTextViewTime;
-        private ImageButton mImageButtonLike;
-        private TextView mTextViewLikes;
+        private TextView mUsernameTextView;
+        private ImageView mPostPictureImageView;
+        private TextView mDescriptionTextView;
+        private ImageView mProfilePictureImageView;
+        private TextView mTimestampTextView;
+        private ImageButton mLikeImageButton;
+        private TextView mLikesCountTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            mTextViewUsername = itemView.findViewById(R.id.textViewUsername);
-            mTextViewDescription = itemView.findViewById(R.id.textViewDescription);
-            mImageViewImage = itemView.findViewById(R.id.imageViewImage);
-            mImageViewProfile = itemView.findViewById(R.id.imageViewProfile);
-            mTextViewTime = itemView.findViewById(R.id.textViewTime);
-            mImageButtonLike = itemView.findViewById(R.id.imageButtonLike);
-            mTextViewLikes = itemView.findViewById(R.id.textViewLikes);
+            mUsernameTextView = itemView.findViewById(R.id.textViewUsername);
+            mDescriptionTextView = itemView.findViewById(R.id.textViewDescription);
+            mPostPictureImageView = itemView.findViewById(R.id.imageViewImage);
+            mProfilePictureImageView = itemView.findViewById(R.id.imageViewProfile);
+            mTimestampTextView = itemView.findViewById(R.id.textViewTime);
+            mLikeImageButton = itemView.findViewById(R.id.imageButtonLike);
+            mLikesCountTextView = itemView.findViewById(R.id.textViewLikes);
 
             itemView.setOnClickListener(this);
-            mImageButtonLike.setOnClickListener(this);
+            mLikeImageButton.setOnClickListener(this);
 
-            mImageViewImage.setOnTouchListener(new OnDoubleTapListener(mContext) {
+            mPostPictureImageView.setOnTouchListener(new OnDoubleTapListener(mContext) {
                 @Override
                 public void onDoubleTap(MotionEvent e) {
                     final int position = getAdapterPosition();
                     // Getting the current post from the List of posts using the adapter position
-                    Post post = mPosts.get(position);
+                    Post post = mPostsList.get(position);
                     // Retrieving the array of users that have liked the current post
                     List<ParseUser> likes = (ArrayList<ParseUser>) post.get("likes");
 
@@ -147,31 +157,31 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         public void bind(Post post) {
             // Bind the post data to the view elements
             String username = post.getUser().getUsername();
-            mTextViewUsername.setText(username);
+            mUsernameTextView.setText(username);
             String description = "<b>" + username + "</b>" + " " + post.getDescription();
-            mTextViewDescription.setText(Html.fromHtml(description));
+            mDescriptionTextView.setText(Html.fromHtml(description));
             String createdAt = post.getCreatedAt().toString();
             String timeStamp = getRelativeTimeAgo(createdAt);
-            mTextViewTime.setText(timeStamp);
+            mTimestampTextView.setText(timeStamp);
 
             // Use Glide to load post image from DB into image view
             // Also confirm that the post has a valid image in DB to load
             ParseFile image = post.getImage();
             if(image != null) {
-                mImageViewImage.setVisibility(View.VISIBLE);
-                Glide.with(mContext).load(image.getUrl()).into(mImageViewImage);
+                mPostPictureImageView.setVisibility(View.VISIBLE);
+                Glide.with(mContext).load(image.getUrl()).into(mPostPictureImageView);
             } else {
-                mImageViewImage.setVisibility(View.GONE);
+                mPostPictureImageView.setVisibility(View.GONE);
             }
 
             // Use Glide again to load profile image from DB into image view
             // Confirm that the post has a valid image in DB to load
             ParseFile profileImage = post.getUser().getParseFile(Post.KEY_PROFILE_IMAGE);
             if(profileImage != null) {
-                mImageViewProfile.setVisibility(View.VISIBLE);
-                Glide.with(mContext).load(profileImage.getUrl()).circleCrop().into(mImageViewProfile);
+                mProfilePictureImageView.setVisibility(View.VISIBLE);
+                Glide.with(mContext).load(profileImage.getUrl()).circleCrop().into(mProfilePictureImageView);
             } else {
-                mImageViewProfile.setVisibility(View.GONE);
+                mProfilePictureImageView.setVisibility(View.GONE);
             }
 
             // Retrieving the list of users that have liked the current Post
@@ -183,15 +193,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             int size = (likes == null) ? 0 : likes.size();
             String likesAppendedWord = (size == 1) ? "like" : "likes";
             String likesCount = Integer.toString(size) + " " + likesAppendedWord;
-            mTextViewLikes.setText(likesCount);
+            mLikesCountTextView.setText(likesCount);
 
             // If the current user has liked the current post, change the color of the like button
             // to red. Otherwise change the color of the heart to black
             if (likes != null && listHasUser(likes, ParseUser.getCurrentUser())) {
-                mImageButtonLike.setColorFilter(ContextCompat.getColor(mContext, R.color.colorRed));
+                mLikeImageButton.setColorFilter(ContextCompat.getColor(mContext, R.color.colorRed));
                 resource = R.drawable.ufi_heart_active;
             } else {
-                mImageButtonLike.setColorFilter(ContextCompat.getColor(mContext, R.color.colorBlack));
+                mLikeImageButton.setColorFilter(ContextCompat.getColor(mContext, R.color.colorBlack));
                 resource = R.drawable.ufi_heart;
             }
 
@@ -199,14 +209,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             Glide.with(mContext)
                     .load(resource)
                     .fitCenter()
-                    .into(mImageButtonLike);
+                    .into(mLikeImageButton);
         }
 
         @Override
         public void onClick(View view) {
             final int position = getAdapterPosition();
             // Getting the current post from the List of posts using the adapter position
-            Post post = mPosts.get(position);
+            Post post = mPostsList.get(position);
             if(view.getId() == R.id.imageButtonLike) {
                 // Retrieving the array of users that have liked the current post
                 List<ParseUser> likes = (ArrayList<ParseUser>) post.get("likes");

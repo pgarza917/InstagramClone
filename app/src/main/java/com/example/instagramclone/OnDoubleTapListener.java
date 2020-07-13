@@ -5,6 +5,10 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+/**
+ *  OnDoubleTapListener is an interface implementation of {@link View.OnTouchListener}. It handles
+ *  the functionality of registering double tap gestures anywhere on the user's screen
+ */
 public class OnDoubleTapListener implements View.OnTouchListener {
 
     private GestureDetector gestureDetector;

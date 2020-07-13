@@ -25,30 +25,37 @@ import android.widget.Toast;
 import com.example.instagramclone.MainActivity;
 import com.example.instagramclone.Post;
 import com.example.instagramclone.R;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
 /**
- * A simple {@link Fragment} subclass.
+ *  ComposeFragment is a subclass of Fragment class. It handles
+ *  much of the functionality of the screen that users go to when
+ *  they would like to create and upload a new post to the InstagramClone
+ *  app. Specifically, this class handles the following features:
+ *      - Navigating users to their phone's camera to take a picture
+ *      for a post
+ *      - Acquiring the photo users take with their camera from the phone's
+ *      file system and displaying it for preview within the app
+ *      - Allowing users to write a caption for their post
+ *      - Allowing users to hit button to upload their new post to the
+ *      Parse database
  */
 public class ComposeFragment extends Fragment {
 
     public static final String TAG = ComposeFragment.class.getSimpleName();
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 46;
 
-    private EditText mEditTextDescription;
-    private Button mButtonCaptureImage;
-    private ImageView mImageViewPost;
-    private Button mButtonSubmit;
+    private EditText mDescriptionEditText;
+    private Button mCaptureImageButton;
+    private ImageView mPostPictureImageView;
+    private Button mSubmitButton;
 
     private File mPhotoFile;
     private String mPhotoFileName = "photo.jpg";
@@ -69,29 +76,29 @@ public class ComposeFragment extends Fragment {
     // This event is triggered soon after onCreateView(). View setup should occur here
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mEditTextDescription = view.findViewById(R.id.editTextDescription);
-        mButtonCaptureImage = view.findViewById(R.id.buttonCaptureImage);
-        mImageViewPost = view.findViewById(R.id.imageViewPost);
-        mButtonSubmit = view.findViewById(R.id.buttonSubmit);
-        mImageViewPost.setVisibility(View.GONE);
+        mDescriptionEditText = view.findViewById(R.id.editTextDescription);
+        mCaptureImageButton = view.findViewById(R.id.buttonCaptureImage);
+        mPostPictureImageView = view.findViewById(R.id.imageViewPost);
+        mSubmitButton = view.findViewById(R.id.buttonSubmit);
+        mPostPictureImageView.setVisibility(View.GONE);
 
-        mButtonCaptureImage.setOnClickListener(new View.OnClickListener() {
+        mCaptureImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchCamera();
             }
         });
 
-        mButtonSubmit.setOnClickListener(new View.OnClickListener() {
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String description = mEditTextDescription.getText().toString();
+                String description = mDescriptionEditText.getText().toString();
                 // Error handling for empty description and for no image data being added
                 if(description.isEmpty()) {
                     Toast.makeText(getContext(), "Description cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(mPhotoFile == null || mImageViewPost.getDrawable() == null) {
+                if(mPhotoFile == null || mPostPictureImageView.getDrawable() == null) {
                     Toast.makeText(getContext(), "There is no image!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -107,6 +114,9 @@ public class ComposeFragment extends Fragment {
 
     }
 
+    // Method for handling the setup and launch of the user's phone camera so that
+    // we can retrieve the captured image from the user's device after the user has
+    // taken a photo
     private void launchCamera() {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -136,8 +146,8 @@ public class ComposeFragment extends Fragment {
                 Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                 // RESIZE BITMAP, see section below
                 // Load the taken image into a preview
-                mImageViewPost.setVisibility(View.VISIBLE);
-                mImageViewPost.setImageBitmap(takenImage);
+                mPostPictureImageView.setVisibility(View.VISIBLE);
+                mPostPictureImageView.setImageBitmap(takenImage);
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
@@ -179,9 +189,9 @@ public class ComposeFragment extends Fragment {
                 }
                 Log.i(TAG, "Post saved successfully");
                 // Clear our description field to give user more visual confirmation of success
-                mEditTextDescription.setText("");
+                mDescriptionEditText.setText("");
                 // Clear out image view for more confirmation of save success
-                mImageViewPost.setImageResource(0);
+                mPostPictureImageView.setImageResource(0);
             }
         });
     }

@@ -1,11 +1,9 @@
 package com.example.instagramclone.fragments;
 
-import android.graphics.PostProcessor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.Html;
@@ -13,37 +11,37 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.instagramclone.Post;
 import com.example.instagramclone.PostParcel;
-import com.example.instagramclone.PostsAdapter;
 import com.example.instagramclone.R;
-import com.parse.ParseFile;
-import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
- * A simple {@link Fragment} subclass.
+ *  DetailsFragment is a subclass of {@link Fragment}. It handles much of
+ *  the functionality of the screen users go to when they tap on a post
+ *  within the posts screen to view more details about the post. Specifically,
+ *  this class handles the following features:
+ *      - Allowing users to view the profile picture of post's creator, the
+ *      username of the post's creator, the uploaded picture of the post, the
+ *      number of likes the post has, the post's caption, and the post's timestamp
+ *      - Enlarging the post's uploaded picture for better visibility
  */
 public class DetailsFragment extends Fragment {
 
-    private TextView mTextViewUsername;
-    private ImageView mImageViewImage;
-    private TextView mTextViewDescription;
-    private ImageView mImageViewProfile;
-    private TextView mTextViewTime;
-    private TextView mTextViewLikes;
+    private TextView mUsernameTextView;
+    private ImageView mPostPictureImageView;
+    private TextView mDescriptionTextView;
+    private ImageView mProfilePictureImageView;
+    private TextView mTimestampTextView;
+    private TextView mLikesCountTextView;
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -60,48 +58,48 @@ public class DetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mTextViewUsername = view.findViewById(R.id.textViewUsername);
-        mTextViewDescription = view.findViewById(R.id.textViewDescription);
-        mImageViewImage = view.findViewById(R.id.imageViewImage);
-        mImageViewProfile = view.findViewById(R.id.imageViewProfile);
-        mTextViewTime = view.findViewById(R.id.textViewTime);
-        mTextViewLikes = view.findViewById(R.id.textViewLikes);
+        mUsernameTextView = view.findViewById(R.id.textViewUsername);
+        mDescriptionTextView = view.findViewById(R.id.textViewDescription);
+        mPostPictureImageView = view.findViewById(R.id.imageViewImage);
+        mProfilePictureImageView = view.findViewById(R.id.imageViewProfile);
+        mTimestampTextView = view.findViewById(R.id.textViewTime);
+        mLikesCountTextView = view.findViewById(R.id.textViewLikes);
 
         // Get the passed Post object
         PostParcel post = Parcels.unwrap(getArguments().getParcelable(PostParcel.class.getSimpleName()));
 
         // Bind the post data to the view elements
         String username = post.getUsername();
-        mTextViewUsername.setText(username);
+        mUsernameTextView.setText(username);
         String description = "<b>" + username + "</b>" + " " + post.getDescription();
-        mTextViewDescription.setText(Html.fromHtml(description));
-        mTextViewTime.setText(post.getTimeStamp());
+        mDescriptionTextView.setText(Html.fromHtml(description));
+        mTimestampTextView.setText(post.getTimeStamp());
 
         // Use Glide to load post image from DB into image view
         // Also confirm that the post has a valid image in DB to load
 
         if(post.getPostImageUrl() != null) {
-            mImageViewImage.setVisibility(View.VISIBLE);
-            Glide.with(getContext()).load(post.getPostImageUrl()).into(mImageViewImage);
+            mPostPictureImageView.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(post.getPostImageUrl()).into(mPostPictureImageView);
         } else {
-            mImageViewImage.setVisibility(View.GONE);
+            mPostPictureImageView.setVisibility(View.GONE);
         }
 
         // Use Glide again to load profile image from DB into image view
         // Confirm that the post has a valid image in DB to load
 
         if(post.getProfileImageUrl() != null) {
-            mImageViewProfile.setVisibility(View.VISIBLE);
-            Glide.with(getContext()).load(post.getProfileImageUrl()).circleCrop().into(mImageViewProfile);
+            mProfilePictureImageView.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(post.getProfileImageUrl()).circleCrop().into(mProfilePictureImageView);
         } else {
-            mImageViewProfile.setVisibility(View.GONE);
+            mProfilePictureImageView.setVisibility(View.GONE);
         }
         // Constructing the correct like count string. Taking into account singular and plural
         // and accounting for posts with no likes, i.e. likes List will be null
 
         String likesAppendedWord = (post.getLikeCount() == 1) ? "like" : "likes";
         String likesCount = Integer.toString(post.getLikeCount()) + " " + likesAppendedWord;
-        mTextViewLikes.setText(likesCount);
+        mLikesCountTextView.setText(likesCount);
 
     }
 
